@@ -1,5 +1,6 @@
 import express from "express";
 import { Request, Response, NextFunction } from "express"
+import { error } from "node:console";
 
 type InvoiceStatus = 'pending' | 'paid';
 
@@ -58,6 +59,21 @@ app.get("/api/health", (_req: Request, res: Response) => {
 
 app.get("/api/invoices", (_req: Request, res: Response) => {
     res.status(200).json(invoices);
+});
+
+app.get("/api/invoices/:id", (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+
+    for(let i = 0; i < invoices.length; i++) {
+        if(invoices[i].id === id) {
+            res.status(200).json(invoices[i]);
+            return;
+        }
+    }
+
+     
+        return res.status(404).json({ error: { message: "Fatura não encontrada" } });
+    
 });
 
 app.use((_req: Request, res: Response) => {
