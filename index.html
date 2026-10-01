@@ -9,87 +9,85 @@
 
 <body>
     <h1>Faturas</h1>
-    <table>
-        <thead>
-            <tr>
-                <td>Cliente</td>
-                <td>Valor</td>
-                <td>Data de Emissão</td>
-                <td>Data de Vencimento</td>
-                <td>Situação</td>
-            </tr>
-        </thead>
-        <tbody>
 
-        </tbody>
-    </table>
+    <div></div>
 
-    <script>
-        const invoices = [
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
+    <script type="text/babel">
+        const root = document.querySelector("div");
 
+        function App() {
+            const invoices = [
+                {
+                    id: 1,
+                    amount: 125000,
+                    status: 'pending',
+                    issueDate: '2026-06-01',
+                    dueDate: '2026-06-15',
+                    customer: { id: 1, name: 'Construtora Meridiano', email: 'contato@meridiano.com.br' },
+                },
+                {
+                    id: 2,
+                    amount: 348000,
+                    status: 'paid',
+                    issueDate: '2026-05-12',
+                    dueDate: '2026-06-11',
+                    customer: { id: 1, name: 'Construtora Meridiano', email: 'contato@meridiano.com.br' },
+                },
+                {
+                    id: 3,
+                    amount: 96500,
+                    status: 'pending',
+                    issueDate: '2026-06-20',
+                    dueDate: '2026-07-20',
+                    customer: { id: 2, name: 'Gráfica Aurora', email: 'contato@graficaaurora.com.br' },
+                }
+            ];
 
+            function statusLabel(status) {
+                if (status !== 'paid') return 'Pendente';
 
-            {
-                id: 1,
-                amount: 125000,
-                status: 'pending',
-                issueDate: '2026-06-01',
-                dueDate: '2026-06-15',
-                customer: { id: 1, name: 'Construtora Meridiano', email: 'contato@meridiano.com.br' },
-            },
-            {
-                id: 2,
-                amount: 348000,
-                status: 'paid',
-                issueDate: '2026-05-12',
-                dueDate: '2026-06-11',
-                customer: { id: 1, name: 'Construtora Meridiano', email: 'contato@meridiano.com.br' },
-            },
-            {
-                id: 3,
-                amount: 96500,
-                status: 'pending',
-                issueDate: '2026-06-20',
-                dueDate: '2026-07-20',
-                customer: { id: 2, name: 'Gráfica Aurora', email: 'contato@graficaaurora.com.br' },
-            },
-        ];
+                return 'Pago';
+            }
 
-        const tableBody = document.querySelector("tbody");
+            return (
+                <>
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Cliente</td>
+                                <td>Valor</td>
+                                <td>Data de Emissão</td>
+                                <td>Data de Vencimento</td>
+                                <td>Situação</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {invoices.map((invoices) => {
+                                return (
+                                    <tr key={invoices.id}>
+                                        <td>{invoices.customer.name}</td>
+                                        <td>{invoices.amount}</td>
+                                        <td>{invoices.issueDate}</td>
+                                        <td>{invoices.dueDate}</td>
+                                        <td>{statusLabel(invoices.status)}</td>
 
-        function statusLabel(status) {
-            return status === "paid" ? "pago" : "pendente"
-        };
+                                    </tr>
+                                )
 
-        for (let i = 0; i < invoices.length; i++) {
-            const invoice = invoices[i];
-            const row = document.createElement("td");
-
-            const client = document.createElement("td");
-            client.textContent = invoice.client
-            row.appendChild(client);
-
-            const amount = document.createElement("td",);
-            amount.textContent = invoice.amount;
-            row.appendChild(amount);
-
-            const issueDate = document.createElement("td")
-            issueDate.textContent = invoice.issueDate;
-            row.appendChild(issueDate);
-
-            const dueDate = document.createElement("td")
-            dueDate.textContent = invoice.dueDate;
-            row.appendChild(dueDate);
-
-            const status = document.createElement("td")
-            status.textContent = statusLabel(invoice.status);
-            row.appendChild(status);
-
-            tableBody.appendChild(row);
-
-        }        
+                            })}
+                        </tbody>
+                    </table>
+                </>
+            )
+        }
+        ReactDOM.createRoot(root).render(<App />);
     </script>
+
+
 </body>
 
 </html>
