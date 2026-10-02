@@ -1,28 +1,26 @@
+import type { Request, Response } from "express";
 import { Router } from "express";
-import { Request, Response, NextFunction } from "express"
 import invoices from "./invoice.data.ts";
-
 
 const router = Router();
 
 router.get("/api/invoices", (_req: Request, res: Response) => {
-    res.status(200).json(invoices);
+  res.status(200).json(invoices);
 });
 
 router.get("/api/invoices/:id", (req: Request, res: Response) => {
-    const id = Number(req.params.id);
+  const id = Number(req.params.id);
 
-    for (let i = 0; i < invoices.length; i++) {
-        if (invoices[i].id === id) {
-            res.status(200).json(invoices[i]);
-            return;
-        }
+  for (let i = 0; i < invoices.length; i++) {
+    if (invoices[i].id === id) {
+      res.status(200).json(invoices[i]);
+      return;
     }
+  }
 
-
-    return res.status(404).json({ error: { message: "Fatura não encontrada" } });
-
+  return res
+    .status(404)
+    .json({ error: { message: "Fatura não encontrada" } });
 });
-
 
 export default router;
