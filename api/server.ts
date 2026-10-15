@@ -4,6 +4,7 @@ import express, {
   type Response,
 } from "express";
 import path from "node:path";
+import pool from "./database.ts";
 import invoices from "./invoice.route.ts";
 
 const app = express();
@@ -15,8 +16,12 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
   next();
 });
 
-app.get("/api/health", (_req: Request, res: Response) => {
-  res.status(200).json(invoices);
+app.get("/api/health", async (_req: Request, res: Response) => {
+  const connect = await pool.query("SELECT datname FROM pg_database WHERE oid = 5;");
+  res.status(200).json({
+    status: "Server is running.",
+    database: connect.rows[0].datname
+  });
 });
 
 app.use("/api/invoices", invoices);
