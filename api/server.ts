@@ -8,6 +8,8 @@ import pool from "./database.ts";
 import dashboard from "./dashboard.route.ts";
 import invoices from "./invoice.route.ts";
 
+
+
 const app = express();
 
 const dist = path.join(import.meta.dirname, "..", "web", "dist");
@@ -35,6 +37,16 @@ app.get("/api/health", async (_req: Request, res: Response) => {
 });
 
 app.use("/api/dashboard", dashboard);
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if(req.url.startsWith("/api")) {
+    next();
+    return;
+  }
+
+  res.sendFile(path.join(dist, "index.html"));
+})
+
 app.use("/api/invoices", invoices);
 
 app.use(express.static(dist));
