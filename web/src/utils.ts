@@ -3,6 +3,9 @@ import type { InvoiceSituation } from "./invoiceType.ts";
 export function situationLabel(situation: InvoiceSituation) {
     return situation === "paid" ? "Pago" : situation === "overdue" ? "atrasado" : "pendente";
 }
+export function situationClass(situation: InvoiceSituation) {
+    return situation === "paid" ? "situation-paid" : situation === "overdue" ? "situation-overdue" : "situation-pending";
+}
 
 export function formatCurrency(cents: number): string {
     const formatter = new Intl.NumberFormat("pt-BR", {
