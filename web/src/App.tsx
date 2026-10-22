@@ -2,7 +2,8 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  Link
+  Link,
+  NavLink
 } from "react-router";
 
 import DashboardPage from "./DashboardPage.tsx";
@@ -14,8 +15,8 @@ export default function App() {
       <header className="brand">Gefina</header>
       <nav className="menu">
         <ul>
-          <li><Link to="/">Painel Inicial</Link></li>
-          <li> <Link to="/faturas">Faturas</Link></li>
+          <li><NavLink to="/">Painel Inicial</NavLink></li>
+          <li> <NavLink to="/faturas">Faturas</NavLink></li>
         </ul>
       </nav>
     </aside>
