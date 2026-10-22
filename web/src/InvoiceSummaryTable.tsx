@@ -13,7 +13,7 @@ interface InvoiceSummaryTableProps {
 }
 
 export default function InvoiceSummaryTable(props: InvoiceSummaryTableProps) {
-    return <div>
+    return <div className='panel'>
         <h2>{props.title}</h2>
 
         <table>
