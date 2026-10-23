@@ -11,6 +11,7 @@ import invoices from "./invoice.route.ts";
 
 
 const app = express();
+app.use(express.json());
 
 const dist = path.join(import.meta.dirname, "..", "web", "dist");
 
@@ -37,6 +38,7 @@ app.get("/api/health", async (_req: Request, res: Response) => {
 });
 
 app.use("/api/dashboard", dashboard);
+app.use("/api/invoices", invoices);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   if(req.url.startsWith("/api")) {
@@ -47,7 +49,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.sendFile(path.join(dist, "index.html"));
 })
 
-app.use("/api/invoices", invoices);
+
 
 app.use(express.static(dist));
 
