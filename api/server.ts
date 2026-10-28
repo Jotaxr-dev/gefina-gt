@@ -4,6 +4,7 @@ import express, {
   type Response,
 } from "express";
 import path from "node:path";
+import fs from "node:fs";
 import pool from "./database.ts";
 import dashboard from "./dashboard.route.ts";
 import invoices from "./invoice.route.ts";
@@ -24,10 +25,10 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 app.get("/api/health", async (_req: Request, res: Response) => {
   try {
     const connect = await pool.query("SELECT datname FROM pg_database WHERE oid = 5;");
-  res.status(200).json({
-    status: "Server is running.",
-    database: connect.rows[0].datname
-  });
+    res.status(200).json({
+      status: "Server is running.",
+      database: connect.rows[0].datname
+    });
   } catch (error) {
     console.error(error);
 
@@ -42,7 +43,7 @@ app.use("/api/dashboard", dashboard);
 app.use("/api/invoices", invoices);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-  if(req.url.startsWith("/api")) {
+  if (req.url.startsWith("/api") || !fs.existsSync(path.join(dist, "index.html"))) {
     next();
     return;
   }
@@ -53,7 +54,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use(express.static(dist));
 
 app.use((_req: Request, res: Response) => {
-  res.status(404).json({ message: "Recurso não encontrado" });
+  res.status(404).json({
+    error: {
+      status: 404,
+      message: "Recurso não encontrado"
+    }
+  });
 });
 
 app.use(handleError)
