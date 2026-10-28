@@ -7,6 +7,7 @@ import path from "node:path";
 import fs from "node:fs";
 import pool from "./database.ts";
 import dashboard from "./dashboard.route.ts";
+import customers from "./customer.route.ts";
 import invoices from "./invoice.route.ts";
 import handleError from "./error.middleware.ts";
 
@@ -40,6 +41,7 @@ app.get("/api/health", async (_req: Request, res: Response) => {
 });
 
 app.use("/api/dashboard", dashboard);
+app.use('/api/customers', customers);
 app.use("/api/invoices", invoices);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
