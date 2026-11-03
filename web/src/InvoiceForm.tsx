@@ -1,4 +1,4 @@
-import { useState, type SubmitEvent } from "react";
+import { useState, type SetStateAction, type SubmitEvent } from "react";
 
 import type { Invoice, InvoiceInput, InvoiceStatus } from "./invoiceType.ts";
 import type { CustomerOption } from "./customerType.ts";
@@ -8,6 +8,9 @@ interface InvoiceFormProps {
     customers: CustomerOption[];
     error: string | null;
     onDelete: () => void;
+    confirmDelete: boolean;
+    setConfirmDelete: React.Dispatch<SetStateAction<boolean>>
+    confirm: () => void;
     onCancel: () => void;
     onSubmit: (values: InvoiceInput) => void;
     busy: boolean;
@@ -22,6 +25,7 @@ export default function InvoiceForm(props: InvoiceFormProps) {
 
     const handleSubmit = (e: SubmitEvent) => {
         e.preventDefault();
+        props.setConfirmDelete(false);
 
         props.onSubmit({
             customerId: Number(customerId),
@@ -69,36 +73,36 @@ export default function InvoiceForm(props: InvoiceFormProps) {
 
                 <div className="horizontal-fields">
 
-                <div className="field">
-                    <label htmlFor="status">Situação</label>
-                    <select
-                        id="status"
-                        value={status}
-                        onChange={(e) => setStatus(e.target.value as InvoiceStatus)}>
-                        <option value="pending">Pendente</option>
-                        <option value="paid">Paga</option>
-                    </select>
-                </div>
-                <div className="field">
-                    <label htmlFor="issueDate">Emissão</label>
-                    <input
-                        type="date"
-                        id="issueDate"
-                        value={issueDate}
-                        onChange={(e) => setIssueDate(e.target.value)}
-                        required />
-                </div>
-                <div className="field">
-                    <label htmlFor='dueDate'>Vencimento</label>
-                    <input
-                        id='dueDate'
-                        type='date'
-                        value={dueDate}
-                        min={issueDate}
-                        onChange={(e) => setDueDate(e.target.value)}
-                        required
-                    />
-                </div>
+                    <div className="field">
+                        <label htmlFor="status">Situação</label>
+                        <select
+                            id="status"
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value as InvoiceStatus)}>
+                            <option value="pending">Pendente</option>
+                            <option value="paid">Paga</option>
+                        </select>
+                    </div>
+                    <div className="field">
+                        <label htmlFor="issueDate">Emissão</label>
+                        <input
+                            type="date"
+                            id="issueDate"
+                            value={issueDate}
+                            onChange={(e) => setIssueDate(e.target.value)}
+                            required />
+                    </div>
+                    <div className="field">
+                        <label htmlFor='dueDate'>Vencimento</label>
+                        <input
+                            id='dueDate'
+                            type='date'
+                            value={dueDate}
+                            min={issueDate}
+                            onChange={(e) => setDueDate(e.target.value)}
+                            required
+                        />
+                    </div>
                 </div>
 
 
@@ -109,7 +113,7 @@ export default function InvoiceForm(props: InvoiceFormProps) {
                         className="button-danger"
                         type="button"
                         onClick={props.onDelete}
-                        disabled={props.busy}>Excluir</button>}
+                        disabled={props.busy}>{props.busy && props.confirmDelete ? 'Excluindo...' : 'Excluir'}</button>}
 
                     <button
                         className="button-secondary"
@@ -120,8 +124,23 @@ export default function InvoiceForm(props: InvoiceFormProps) {
                     <button
                         className="button-primary"
                         type="submit"
-                        disabled={props.busy}>{props.busy ? "Salvando..." : "Salvar"}</button>
+                        disabled={props.busy}>{props.busy && !props.confirmDelete? "Salvando..." : "Salvar"}</button>
                 </div>
+
+                {props.confirmDelete && <div className="confirm-form">
+                    <p>A exclusão é difinitiva e não pode ser desfeita. Deseja prosseguir?</p>
+
+                    <button
+                        className="button-secondary"
+                        type="button"
+                        onClick={() => props.setConfirmDelete(false)}
+                        disabled={props.busy}>Não</button>
+                    <button
+                        className="button-danger"
+                        type="button"
+                        onClick={props.confirm}
+                        disabled={props.busy}>Sim</button>
+                </div>}
             </form>
         </>
     )

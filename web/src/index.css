@@ -170,6 +170,10 @@ td {
     padding: var(--space-3);
 }
 
+.td-button {
+    text-align: center;
+}
+
 
 .numeric {
     font-variant-numeric: tabular-nums;
@@ -255,6 +259,17 @@ form {
 .form-actions button {
     width: 100%;
 
+}
+
+.confirm-form {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    
+}
+
+.confirm-form button{
+    flex-grow: 1;
 }
 
 input,
