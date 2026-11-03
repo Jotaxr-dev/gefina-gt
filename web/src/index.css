@@ -203,6 +203,7 @@ td {
 }
 
 .invoice-modal {
+    margin: auto;
     width: 720px;
     padding: var(--space-6);
     background-color: var(--color-surface);
