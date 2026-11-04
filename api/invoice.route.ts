@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { Router } from "express";
+import { invoiceSchema, toFielsErrors} from "./invoice.schema.ts";
 import { findAllInvoices, findInvoiceById, insertInvoice, modifyInvoice, removeInvoice } from "./invoice.service.ts";
 
 
@@ -49,14 +50,19 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", async (req: Request, res: Response) => {
-  const invoice = await insertInvoice(req.body);
+ const result = invoiceSchema.safeParse(req.body);
 
-  if (!invoice) res.status(404).json({
+ if(!result.success) {
+ return res.status(400).json({
     error: {
-      status: 404,
-      message: "Fatura não encontrada."
+      status: 400,
+      message: "Dados inválidos",
+      fields: toFielsErrors(result.error)
     }
   })
+ }
+ 
+  const invoice = await insertInvoice(result.data);
 
   res.status(201).json(invoice);
 });
@@ -111,6 +117,8 @@ router.delete("/:id", async (req, res) => {
       message: "Fatura não encontrada."
     }
   })
+
+  res.status(204).end();
 })
 
 export default router;
