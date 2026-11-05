@@ -1,12 +1,18 @@
-import { useState, type SubmitEvent,  type SetStateAction } from 'react';
+import { useState, type SubmitEvent, type SetStateAction } from 'react';
 
-import type { Invoice, InvoiceInput, InvoiceStatus } from './invoiceType.ts';
+import type {
+    Invoice,
+    InvoiceInput,
+    InvoiceStatus,
+    InvoiceFieldErrors
+} from './invoiceType.ts';
 import type { CustomerOption } from './customerType.ts';
 
 interface InvoiceFormProps {
     invoice: Invoice | null;
     customers: CustomerOption[];
     error: string | null;
+    fieldErrors: InvoiceFieldErrors;
     confirmDelete: boolean;
     setConfirmDelete: React.Dispatch<SetStateAction<boolean>>;
     confirm: () => void;
@@ -17,7 +23,7 @@ interface InvoiceFormProps {
 }
 
 export default function InvoiceForm(props: InvoiceFormProps) {
-    const [customerId, setCustomerId] = useState(!props.invoice ? '' : props.invoice.customer.id);
+    const [customerId, setCustomerId] = useState(!props.invoice ? undefined : String(props.invoice.customer.id));
     const [amount, setAmount] = useState(!props.invoice ? '' : (props.invoice.amount / 100).toFixed(2));
     const [status, setStatus] = useState<InvoiceStatus>(!props.invoice ? 'pending' : props.invoice.status);
     const [issueDate, setIssueDate] = useState(!props.invoice ? '' : props.invoice.issueDate);
@@ -47,7 +53,7 @@ export default function InvoiceForm(props: InvoiceFormProps) {
                 onChange={(event) => setCustomerId(event.target.value)}
                 required
             >
-                <option>Selecione um cliente</option>
+                <option value=''>Selecione um cliente</option>
                 {props.customers.map((customer) => {
                     return <option key={customer.id} value={customer.id}>
                         {customer.name} — {customer.email}
@@ -102,7 +108,7 @@ export default function InvoiceForm(props: InvoiceFormProps) {
             </div>
         </div>
 
-        {!props.error ? null : <p className='form-error'>{props.error}</p>}
+
 
         <div className='form-actions'>
             {!props.invoice ? null : <button
@@ -110,7 +116,7 @@ export default function InvoiceForm(props: InvoiceFormProps) {
                 type='button'
                 onClick={props.onDelete}
                 disabled={props.busy}
-            >{props.busy && props.confirmDelete? 'Excluindo...' : 'Excluir'}</button>}
+            >{props.busy && props.confirmDelete ? 'Excluindo...' : 'Excluir'}</button>}
             <button
                 className='button-secondary'
                 type='button'
@@ -139,5 +145,13 @@ export default function InvoiceForm(props: InvoiceFormProps) {
                 disabled={props.busy}
             >Sim</button>
         </div>}
+
+        {props.error && <p className='form-error'>{props.error}</p>}
+        {props.fieldErrors.customerId && <p className='form-error'>{props.fieldErrors.customerId}</p>}
+        {props.fieldErrors.amount && <p className='form-error'>{props.fieldErrors.amount}</p>}
+        {props.fieldErrors.status && <p className='form-error'>{props.fieldErrors.status}</p>}
+        {props.fieldErrors.issueDate && <p className='form-error'>{props.fieldErrors.issueDate}</p>}
+        {props.fieldErrors.dueDate && <p className='form-error'>{props.fieldErrors.dueDate}</p>}
+        {props.error && <p className='form-error'>{props.error}</p>}
     </form>;
 }
