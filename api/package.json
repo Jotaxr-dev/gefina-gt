@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "start": "node ./server.ts",
-    "check": "tsc --noEmit,",
+    "check": "tsc --noEmit",
     "test": "vitest run",
     "dev": "node --watch --env-file=.env  ./server.ts",
     "postinstall": "prisma generate",

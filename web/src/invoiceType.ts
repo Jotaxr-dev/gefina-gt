@@ -11,7 +11,7 @@ export interface Invoice {
   id: number;
   amount: number;
   status: InvoiceStatus;
-  situation: InvoiceSituation,
+  situation: InvoiceSituation;
   issueDate: string;
   dueDate: string;
   customer: Customer;
