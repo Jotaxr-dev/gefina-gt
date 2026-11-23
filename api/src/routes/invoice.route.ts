@@ -1,13 +1,13 @@
 import type { Request, Response } from "express";
 import { Router } from "express";
-import { invoiceSchema, toFielsErrors } from "./invoice.schema.ts";
+import { invoiceSchema, toFielsErrors } from "../schemas/invoice.schema.ts";
 import {
   findAllInvoices,
   findInvoiceById,
   insertInvoice,
   modifyInvoice,
   removeInvoice,
-} from "./invoice.service.ts";
+} from "../services/invoice.service.ts";
 
 const router = Router();
 

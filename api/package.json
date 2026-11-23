@@ -1,10 +1,10 @@
 {
   "type": "module",
   "scripts": {
-    "start": "node ./server.ts",
+    "start": "node ./src/server.ts",
     "check": "tsc --noEmit",
     "test": "vitest run",
-    "dev": "node --watch --env-file=.env  ./server.ts",
+    "dev": "node --watch --env-file=.env  ./src/server.ts",
     "postinstall": "prisma generate",
     "seed": "node --env-file=.env ./prisma/seed.ts",
     "migrate:deploy": "prisma migrate deploy"
