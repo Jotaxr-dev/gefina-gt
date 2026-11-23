@@ -1,252 +1,282 @@
-import {
-    describe,
-    it,
-    expect,
-    vi
-} from 'vitest';
+import { render, screen } from "@testing-library/react";
+import user from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
+import InvoiceForm from "./InvoiceForm.tsx";
 
-import {
-    render,
-    screen
-} from '@testing-library/react';
+describe("InvoiceForm", () => {
+  it("apresenta os campos com rótulo associado", () => {
+    render(
+      <InvoiceForm
+        invoice={null}
+        customers={[
+          {
+            id: 1,
+            name: "Cliente de Teste",
+            email: "cliente@teste.com.br",
+          },
+        ]}
+        error={null}
+        fieldErrors={{}}
+        onDelete={() => {}}
+        confirmDelete={false}
+        setConfirmDelete={() => {}}
+        confirm={() => {}}
+        onCancel={() => {}}
+        onSubmit={() => {}}
+        busy={false}
+      />,
+    );
 
-import InvoiceForm from './InvoiceForm.tsx';
+    expect(screen.getByLabelText("Cliente")).toBeDefined();
+    expect(screen.getByLabelText("Valor")).toBeDefined();
+    expect(screen.getByLabelText("Situação")).toBeDefined();
+    expect(screen.getByLabelText("Emissão")).toBeDefined();
+    expect(screen.getByLabelText("Vencimento")).toBeDefined();
+  });
 
-import user from '@testing-library/user-event';
+  it("entrega os valores convertidos no envio", async () => {
+    const onSubmit = vi.fn();
 
-describe(
-    'InvoiceForm',
-    () => {
-        it(
-            'apresenta os campos com rótulo associado',
-            () => {
-                render(<InvoiceForm
-                    invoice={null}
-                    customers={[{
-                        id: 1,
-                        name: 'Cliente de Teste',
-                        email: 'cliente@teste.com.br'
-                    }]}
-                    error={null}
-                    fieldErrors={{}}
-                    onDelete={() => { }}
-                    confirmDelete={false}
-                    setConfirmDelete={() => { }}
-                    confirm={() => { }}
-                    onCancel={() => { }}
-                    onSubmit={() => { }}
-                    busy={false}
-                />);
+    render(
+      <InvoiceForm
+        invoice={null}
+        customers={[
+          {
+            id: 1,
+            name: "Cliente de Teste",
+            email: "cliente@teste.com.br",
+          },
+        ]}
+        error={null}
+        fieldErrors={{}}
+        onDelete={() => {}}
+        confirmDelete={false}
+        setConfirmDelete={() => {}}
+        confirm={() => {}}
+        onCancel={() => {}}
+        onSubmit={onSubmit}
+        busy={false}
+      />,
+    );
 
-                expect(screen.getByLabelText('Cliente')).toBeDefined();
-                expect(screen.getByLabelText('Valor')).toBeDefined();
-                expect(screen.getByLabelText('Situação')).toBeDefined();
-                expect(screen.getByLabelText('Emissão')).toBeDefined();
-                expect(screen.getByLabelText('Vencimento')).toBeDefined();
-            }
-        );
+    await user.selectOptions(screen.getByLabelText("Cliente"), "1");
+    await user.type(screen.getByLabelText("Valor"), "1250.37");
+    await user.selectOptions(
+      screen.getByLabelText("Situação"),
+      "pending",
+    );
+    await user.type(screen.getByLabelText("Emissão"), "2026-11-01");
+    await user.type(
+      screen.getByLabelText("Vencimento"),
+      "2026-11-30",
+    );
+    await user.click(screen.getByRole("button", { name: "Salvar" }));
 
-        it(
-            'entrega os valores convertidos no envio',
-            async () => {
-                const onSubmit = vi.fn();
+    expect(onSubmit).toHaveBeenCalledWith({
+      customerId: 1,
+      amount: 125037,
+      status: "pending",
+      issueDate: "2026-11-01",
+      dueDate: "2026-11-30",
+    });
+  });
 
-                render(<InvoiceForm
-                    invoice={null}
-                    customers={[{
-                        id: 1,
-                        name: 'Cliente de Teste',
-                        email: 'cliente@teste.com.br'
-                    }]}
-                    error={null}
-                    fieldErrors={{}}
-                    onDelete={() => { }}
-                    confirmDelete={false}
-                    setConfirmDelete={() => { }}
-                    confirm={() => { }}
-                    onCancel={() => { }}
-                    onSubmit={onSubmit}
-                    busy={false}
-                />);
+  it("não envia o formulário com campo obrigatório vazio e apresenta mensagens de erros de campo", async () => {
+    const onSubmit = vi.fn();
 
-                await user.selectOptions(screen.getByLabelText('Cliente'), '1');
-                await user.type(screen.getByLabelText('Valor'), '1250.37');
-                await user.selectOptions(screen.getByLabelText('Situação'), 'pending');
-                await user.type(screen.getByLabelText('Emissão'), '2026-11-01');
-                await user.type(screen.getByLabelText('Vencimento'), '2026-11-30');
-                await user.click(screen.getByRole('button', { name: 'Salvar' }));
+    render(
+      <InvoiceForm
+        invoice={null}
+        customers={[
+          {
+            id: 1,
+            name: "Cliente de Teste",
+            email: "teste@gefina.com.br",
+          },
+        ]}
+        error={null}
+        fieldErrors={{
+          customerId: "O cliente é obrigatório.",
+          amount: "O valor é obrigatório.",
+          issueDate: "A data de emissão deve ser uma data válida.",
+          dueDate: "A data de vencimento deve ser uma data válida.",
+        }}
+        onDelete={() => {}}
+        confirmDelete={false}
+        setConfirmDelete={() => {}}
+        confirm={() => {}}
+        onCancel={() => {}}
+        onSubmit={onSubmit}
+        busy={false}
+      />,
+    );
 
-                expect(onSubmit).toHaveBeenCalledWith({
-                    customerId: 1,
-                    amount: 125037,
-                    status: 'pending',
-                    issueDate: '2026-11-01',
-                    dueDate: '2026-11-30'
-                });
-            }
-        );
+    await user.click(screen.getByRole("button", { name: "Salvar" }));
 
-        it(
-            'não envia o formulário com campo obrigatório vazio e apresenta mensagens de erros de campo',
-            async () => {
-                const onSubmit = vi.fn();
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(
+      screen.getByText("O cliente é obrigatório."),
+    ).toBeDefined();
+    expect(screen.getByText("O valor é obrigatório.")).toBeDefined();
+    expect(
+      screen.getByText("A data de emissão deve ser uma data válida."),
+    ).toBeDefined();
+    expect(
+      screen.getByText(
+        "A data de vencimento deve ser uma data válida.",
+      ),
+    ).toBeDefined();
+  });
 
-                render(<InvoiceForm
-                    invoice={null}
-                    customers={[{
-                        id: 1,
-                        name: 'Cliente de Teste',
-                        email: 'teste@gefina.com.br'
-                    }]}
-                    error={null}
-                    fieldErrors={{
-                        customerId: 'O cliente é obrigatório.',
-                        amount: 'O valor é obrigatório.',
-                        issueDate: 'A data de emissão deve ser uma data válida.',
-                        dueDate: 'A data de vencimento deve ser uma data válida.'
-                    }}
-                    onDelete={() => { }}
-                    confirmDelete={false}
-                    setConfirmDelete={() => { }}
-                    confirm={() => { }}
-                    onCancel={() => { }}
-                    onSubmit={onSubmit}
-                    busy={false}
-                />);
+  it("desabilita acionamentos durante o processamento", async () => {
+    render(
+      <InvoiceForm
+        invoice={null}
+        customers={[
+          {
+            id: 1,
+            name: "Cliente de Teste",
+            email: "cliente@teste.com.br",
+          },
+        ]}
+        error={null}
+        fieldErrors={{}}
+        onDelete={() => {}}
+        confirmDelete={false}
+        setConfirmDelete={() => {}}
+        confirm={() => {}}
+        onCancel={() => {}}
+        onSubmit={() => {}}
+        busy={true}
+      />,
+    );
 
-                await user.click(screen.getByRole('button', { name: 'Salvar' }));
+    expect(
+      screen.getByRole("button", { name: "Salvando..." }),
+    ).toHaveProperty("disabled", true);
+    expect(
+      screen.getByRole("button", { name: "Cancelar" }),
+    ).toHaveProperty("disabled", true);
+  });
 
-                expect(onSubmit).not.toHaveBeenCalled();
-                expect(screen.getByText('O cliente é obrigatório.')).toBeDefined();
-                expect(screen.getByText('O valor é obrigatório.')).toBeDefined();
-                expect(screen.getByText('A data de emissão deve ser uma data válida.')).toBeDefined();
-                expect(screen.getByText('A data de vencimento deve ser uma data válida.')).toBeDefined();
-            }
-        );
+  it("apresenta mensagem de falha recebida", () => {
+    render(
+      <InvoiceForm
+        invoice={null}
+        customers={[
+          {
+            id: 1,
+            name: "Cliente de Teste",
+            email: "cliente@teste.com.br",
+          },
+        ]}
+        error={"Falha ao criar fatura."}
+        fieldErrors={{}}
+        onDelete={() => {}}
+        confirmDelete={false}
+        setConfirmDelete={() => {}}
+        confirm={() => {}}
+        onCancel={() => {}}
+        onSubmit={() => {}}
+        busy={false}
+      />,
+    );
 
-        it(
-            'desabilita acionamentos durante o processamento',
-            async () => {
-                render(<InvoiceForm
-                    invoice={null}
-                    customers={[{
-                        id: 1,
-                        name: 'Cliente de Teste',
-                        email: 'cliente@teste.com.br'
-                    }]}
-                    error={null}
-                    fieldErrors={{}}
-                    onDelete={() => { }}
-                    confirmDelete={false}
-                    setConfirmDelete={() => { }}
-                    confirm={() => { }}
-                    onCancel={() => { }}
-                    onSubmit={() => { }}
-                    busy={true}
-                />);
+    expect(screen.getByText("Falha ao criar fatura.")).toBeDefined();
+  });
 
-                expect(screen.getByRole('button', { name: 'Salvando...' })).toHaveProperty('disabled', true);
-                expect(screen.getByRole('button', { name: 'Cancelar' })).toHaveProperty('disabled', true);
-            }
-        );
+  it("preeche os campos com a fatura recebida", () => {
+    render(
+      <InvoiceForm
+        invoice={{
+          id: 1,
+          amount: 125037,
+          status: "pending",
+          situation: "overdue",
+          issueDate: "2026-10-01",
+          dueDate: "2026-10-31",
+          customer: {
+            id: 1,
+            name: "Cliente de Teste",
+            email: "cliente@teste.com.br",
+          },
+        }}
+        customers={[
+          {
+            id: 1,
+            name: "Cliente de Teste",
+            email: "cliente@teste.com.br",
+          },
+        ]}
+        error={null}
+        fieldErrors={{}}
+        onDelete={() => {}}
+        confirmDelete={false}
+        setConfirmDelete={() => {}}
+        confirm={() => {}}
+        onCancel={() => {}}
+        onSubmit={() => {}}
+        busy={false}
+      />,
+    );
 
-        it(
-            'apresenta mensagem de falha recebida',
-            () => {
-                render(<InvoiceForm
-                    invoice={null}
-                    customers={[{
-                        id: 1,
-                        name: 'Cliente de Teste',
-                        email: 'cliente@teste.com.br'
-                    }]}
-                    error={'Falha ao criar fatura.'}
-                    fieldErrors={{}}
-                    onDelete={() => { }}
-                    confirmDelete={false}
-                    setConfirmDelete={() => { }}
-                    confirm={() => { }}
-                    onCancel={() => { }}
-                    onSubmit={() => { }}
-                    busy={false}
-                />);
+    expect(screen.getByText("Editar fatura")).toBeDefined();
+    expect(screen.getByLabelText("Cliente")).toHaveProperty(
+      "value",
+      "1",
+    );
+    expect(screen.getByLabelText("Valor")).toHaveProperty(
+      "value",
+      "1250.37",
+    );
+    expect(screen.getByLabelText("Situação")).toHaveProperty(
+      "value",
+      "pending",
+    );
+    expect(screen.getByLabelText("Emissão")).toHaveProperty(
+      "value",
+      "2026-10-01",
+    );
+    expect(screen.getByLabelText("Vencimento")).toHaveProperty(
+      "value",
+      "2026-10-31",
+    );
+    expect(
+      screen.getByRole("button", { name: "Excluir" }),
+    ).toBeDefined();
+  });
 
-                expect(screen.getByText('Falha ao criar fatura.')).toBeDefined();
-            }
-        );
+  it("devolve o cancelamento sem enviar o formulário", async () => {
+    const onCancel = vi.fn();
+    const onSubmit = vi.fn();
 
-        it(
-            'preeche os campos com a fatura recebida',
-            () => {
-                render(<InvoiceForm
-                    invoice={{
-                        id: 1,
-                        amount: 125037,
-                        status: 'pending',
-                        situation: 'overdue',
-                        issueDate: '2026-10-01',
-                        dueDate: '2026-10-31',
-                        customer: {
-                            id: 1,
-                            name: 'Cliente de Teste',
-                            email: 'cliente@teste.com.br'
-                        }
-                    }}
-                    customers={[{
-                        id: 1,
-                        name: 'Cliente de Teste',
-                        email: 'cliente@teste.com.br'
-                    }]}
-                    error={null}
-                    fieldErrors={{}}
-                    onDelete={() => { }}
-                    confirmDelete={false}
-                    setConfirmDelete={() => { }}
-                    confirm={() => { }}
-                    onCancel={() => { }}
-                    onSubmit={() => { }}
-                    busy={false}
-                />);
+    render(
+      <InvoiceForm
+        invoice={null}
+        customers={[
+          {
+            id: 1,
+            name: "Cliente de Teste",
+            email: "cliente@teste.com.br",
+          },
+        ]}
+        error={null}
+        fieldErrors={{}}
+        onDelete={() => {}}
+        confirmDelete={false}
+        setConfirmDelete={() => {}}
+        confirm={() => {}}
+        onCancel={onCancel}
+        onSubmit={onSubmit}
+        busy={false}
+      />,
+    );
 
-                expect(screen.getByText('Editar fatura')).toBeDefined();
-                expect(screen.getByLabelText('Cliente')).toHaveProperty('value', '1');
-                expect(screen.getByLabelText('Valor')).toHaveProperty('value', '1250.37');
-                expect(screen.getByLabelText('Situação')).toHaveProperty('value', 'pending');
-                expect(screen.getByLabelText('Emissão')).toHaveProperty('value', '2026-10-01');
-                expect(screen.getByLabelText('Vencimento')).toHaveProperty('value', '2026-10-31');
-                expect(screen.getByRole('button', { name: 'Excluir' })).toBeDefined();
-            }
-        );
+    await user.click(
+      screen.getByRole("button", { name: "Cancelar" }),
+    );
 
-        it(
-            'devolve o cancelamento sem enviar o formulário',
-            async () => {
-                const onCancel = vi.fn();
-                const onSubmit = vi.fn();
-
-                render(<InvoiceForm
-                    invoice={null}
-                    customers={[{
-                        id: 1,
-                        name: 'Cliente de Teste',
-                        email: 'cliente@teste.com.br'
-                    }]}
-                    error={null}
-                    fieldErrors={{}}
-                    onDelete={() => { }}
-                    confirmDelete={false}
-                    setConfirmDelete={() => { }}
-                    confirm={() => { }}
-                    onCancel={onCancel}
-                    onSubmit={onSubmit}
-                    busy={false}
-                />);
-
-                await user.click(screen.getByRole('button', { name: 'Cancelar' }));
-
-                expect(onCancel).toHaveBeenCalledTimes(1);
-                expect(onSubmit).not.toHaveBeenCalled();
-            }
-        );
-    }
-);
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+});

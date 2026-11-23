@@ -13,8 +13,6 @@
   --color-pending: #d29922;
   --color-overdue: #f85149;
 
-  
-
   --radius-control: 6px;
   --radius-surface: 10px;
   --radius-dialog: 14px;
@@ -23,6 +21,4 @@
   --text-xl: 1.5rem;
 
   --font-sans: "Inter", system-ui, sans-serif;
-
 }
-

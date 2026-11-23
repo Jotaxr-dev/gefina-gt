@@ -20,9 +20,21 @@ export default function InvoiceSummaryTable(
       <table className="w-full border-collapse">
         <thead>
           <tr>
-            <th className={`${base} text-sm text-left font-medium text-text-muted`}>Cliente</th>
-            <th className={`${base} text-sm text-left font-medium text-text-muted`}>Valor</th>
-            <th className={`${base} text-sm font-medium text-text-muted`}>{props.dateLabel}</th>
+            <th
+              className={`${base} text-sm text-left font-medium text-text-muted`}
+            >
+              Cliente
+            </th>
+            <th
+              className={`${base} text-sm text-left font-medium text-text-muted`}
+            >
+              Valor
+            </th>
+            <th
+              className={`${base} text-sm font-medium text-text-muted`}
+            >
+              {props.dateLabel}
+            </th>
           </tr>
         </thead>
         <tbody>

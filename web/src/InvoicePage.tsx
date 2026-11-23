@@ -131,7 +131,10 @@ export default function InvoicePage() {
     setBusy(false);
   }
 
-  if (loading) return <p className="text-sm text-shadow-text-muted">Carregando...</p>;
+  if (loading)
+    return (
+      <p className="text-sm text-shadow-text-muted">Carregando...</p>
+    );
 
   if (error) return <p className="text-overdue">{error}</p>;
 
