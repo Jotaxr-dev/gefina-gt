@@ -5,16 +5,16 @@ import express, {
   type Request,
   type Response,
 } from "express";
-import customers from "./customer.route.ts";
-import dashboard from "./dashboard.route.ts";
-import handleError from "./error.middleware.ts";
-import invoices from "./invoice.route.ts";
+import customers from "./routes/customer.route.ts";
+import dashboard from "./routes/dashboard.route.ts";
+import handleError from "./middlewares/error.middleware.ts";
+import invoices from "./routes/invoice.route.ts";
 import prisma from "./prisma.ts";
 
 const app = express();
 app.use(express.json());
 
-const dist = path.join(import.meta.dirname, "..", "web", "dist");
+const dist = path.join(import.meta.dirname, "..", "..", "web", "dist");
 
 app.use((req: Request, _res: Response, next: NextFunction) => {
   console.log(`${req.method}${req.url}`);
