@@ -42,6 +42,8 @@ app.use("/api/dashboard", dashboard);
 app.use("/api/customers", customers);
 app.use("/api/invoices", invoices);
 
+app.use(express.static(dist));
+
 app.use((req: Request, res: Response, next: NextFunction) => {
   if (
     req.url.startsWith("/api") ||
@@ -54,7 +56,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.sendFile(path.join(dist, "index.html"));
 });
 
-app.use(express.static(dist));
 
 app.use((_req: Request, res: Response) => {
   res.status(404).json({
